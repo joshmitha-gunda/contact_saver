@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quick Contact</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&display=swap" rel="stylesheet">
-
-<!-- Flatpickr CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <style>
@@ -16,6 +15,10 @@
     --sage-active: #9ACF90;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Baloo 2', sans-serif;
     background-color: var(--sage-bg);
@@ -23,7 +26,8 @@ body {
     justify-content: center;
     align-items: flex-start;
     min-height: 100vh;
-    margin: 20px 0;
+    margin: 0;
+    padding: 20px 15px;
     font-weight: 500;
 }
 
@@ -53,6 +57,7 @@ label {
     font-weight: 600;
     margin-top: 10px;
     display: block;
+    font-size: 14px;
 }
 
 input, textarea {
@@ -61,9 +66,10 @@ input, textarea {
     margin: 6px 0 16px 0;
     border-radius: 10px;
     border: 1px solid #ccc;
-    font-size: 14px;
+    font-size: 16px;
     box-sizing: border-box;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    font-family: 'Baloo 2', sans-serif;
 }
 
 input:focus, textarea:focus {
@@ -72,11 +78,10 @@ input:focus, textarea:focus {
     outline: none;
 }
 
-/* Generate QR button */
 button[type="submit"] {
     width: 100%;
     padding: 14px;
-    background-color: #7B9A6D; /* slightly darker than bg */
+    background-color: #7B9A6D;
     color: #FFFFFF;
     font-size: 16px;
     border: none;
@@ -99,7 +104,6 @@ button[type="submit"].valid:active {
     background-color: var(--sage-active);
 }
 
-/* Toggle text */
 .toggle-text {
     color: var(--sage-darker);
     font-weight: 600;
@@ -136,10 +140,12 @@ button[type="submit"].valid:active {
 #qr-section h2 {
     color: var(--sage-darker);
     margin-bottom: 12px;
+    font-size: 1.4em;
 }
 
 #qr-section img {
-    max-width: 90%; /* responsive */
+    max-width: 100%;
+    width: 280px;
     height: auto;
     margin-bottom: 12px;
 }
@@ -181,20 +187,62 @@ button[type="submit"].valid:active {
     text-align: center;
 }
 
-/* Responsive adjustments */
-@media (max-width: 550px) {
+/* Mobile optimizations */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+        align-items: flex-start;
+    }
+    
+    .container {
+        padding: 25px 20px;
+        margin: 0;
+        border-radius: 15px;
+        min-height: calc(100vh - 20px);
+    }
+    
+    h1 {
+        font-size: 1.6em;
+        margin-bottom: 20px;
+    }
+    
+    label {
+        font-size: 15px;
+    }
+    
+    input, textarea {
+        font-size: 16px;
+        padding: 14px;
+    }
+    
+    button[type="submit"] {
+        padding: 16px;
+        font-size: 17px;
+    }
+    
+    #qr-section {
+        padding: 15px;
+    }
+    
+    #qr-section img {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    #qr-section a button {
+        width: 100%;
+        padding: 14px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 380px) {
     .container {
         padding: 20px 15px;
-        margin: 10px;
     }
+    
     h1 {
-        font-size: 1.5em;
-    }
-    input, textarea, button {
-        font-size: 14px;
-    }
-    #qr-section img {
-        max-width: 100%;
+        font-size: 1.4em;
     }
 }
 </style>
@@ -210,28 +258,28 @@ button[type="submit"].valid:active {
 
     <form method="POST" id="contactForm">
         <label for="name">Full Name:</label>
-        <input type="text" name="name" id="name" required value="{{ values.get('name','') }}">
+        <input type="text" name="name" id="name" required value="{{ values.get('name','') }}" autocomplete="name">
 
         <label for="phone">Phone Number:</label>
-        <input type="text" name="phone" id="phone" required value="{{ values.get('phone','') }}">
+        <input type="tel" name="phone" id="phone" required value="{{ values.get('phone','') }}" autocomplete="tel">
 
         <label for="email">Email: <span class="optional">(optional)</span></label>
-        <input type="email" name="email" id="email" value="{{ values.get('email','') }}">
+        <input type="email" name="email" id="email" value="{{ values.get('email','') }}" autocomplete="email">
 
         <div id="toggleOptional" class="toggle-text">Show More Optional Fields ▼</div>
 
         <div class="optional-fields" id="optionalFields" style="display:none;">
             <label for="org">Organization:</label>
-            <input type="text" name="org" id="org" value="{{ values.get('org','') }}">
+            <input type="text" name="org" id="org" value="{{ values.get('org','') }}" autocomplete="organization">
 
             <label for="title">Job Title:</label>
-            <input type="text" name="title" id="title" value="{{ values.get('title','') }}">
+            <input type="text" name="title" id="title" value="{{ values.get('title','') }}" autocomplete="organization-title">
 
             <label for="birthday">Birthday:</label>
-            <input type="text" id="birthday" name="birthday" placeholder="YYYY-MM-DD" value="{{ values.get('birthday','') }}">
+            <input type="text" id="birthday" name="birthday" placeholder="YYYY-MM-DD" value="{{ values.get('birthday','') }}" autocomplete="bday">
 
             <label for="address">Address:</label>
-            <textarea name="address" id="address" rows="2">{{ values.get('address','') }}</textarea>
+            <textarea name="address" id="address" rows="2" autocomplete="street-address">{{ values.get('address','') }}</textarea>
 
             <label for="note">Notes:</label>
             <textarea name="note" id="note" rows="2">{{ values.get('note','') }}</textarea>
