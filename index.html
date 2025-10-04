@@ -1,291 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Quick Contact</title>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Quick Contact QR Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sage-bg: #9CAF88;
+            --sage-darker: #7D9B6F;
+            --sage-hover: #8FAE79;
+        }
 
-<!-- Flatpickr CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        body {
+            font-family: 'Baloo 2', sans-serif;
+            background-color: var(--sage-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
 
-<style>
-:root {
-    --sage-bg: #9CAF88;        /* page background */
-    --sage-darker: #7D9B6F;    /* buttons and QR heading */
-    --sage-hover: #8FAE79;     /* hover/brighter shade */
-    --sage-active: #9ACF90;    /* click/brightest */
-}
+        .container {
+            background-color: #FFF9E3;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            max-width: 400px;
+            width: 100%;
+        }
 
-body {
-    font-family: 'Baloo 2', sans-serif;
-    background-color: var(--sage-bg);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    font-weight: 500;
-}
+        h1 {
+            text-align: center;
+            color: var(--sage-darker);
+            margin-bottom: 25px;
+        }
 
-.container {
-    background-color: #FFF9E3;
-    padding: 35px 30px;
-    border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-    max-width: 500px;
-    width: 100%;
-    transition: transform 0.3s ease;
-}
+        .form-group {
+            margin-bottom: 20px;
+        }
 
-.container:hover {
-    transform: translateY(-3px);
-}
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
 
-h1 {
-    text-align: center;
-    margin-bottom: 25px;
-    color: var(--sage-darker);
-    font-weight: 700;
-}
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
 
-label {
-    font-weight: 600;
-    margin-top: 10px;
-    display: block;
-}
+        input:focus {
+            border-color: var(--sage-darker);
+            outline: none;
+        }
 
-input, textarea {
-    width: 100%;
-    padding: 12px;
-    margin: 6px 0 16px 0;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    font-size: 14px;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--sage-darker);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
 
-input:focus, textarea:focus {
-    border-color: var(--sage-darker);
-    box-shadow: 0 0 8px rgba(125,155,111,0.2);
-    outline: none;
-}
+        button:hover {
+            background-color: var(--sage-hover);
+        }
 
-/* Generate QR button */
-button[type="submit"] {
-    width: 100%;
-    padding: 14px;
-    background-color: var(--sage-darker);
-    color: #FFFFFF;
-    font-size: 16px;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-weight: 600;
-    margin-top: 10px;
-}
+        #qr-section {
+            display: none;
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+        }
 
-button[type="submit"]:hover {
-    background-color: var(--sage-hover);
-}
+        #qrcode img {
+            max-width: 200px;
+            height: auto;
+            margin: 15px 0;
+        }
 
-button[type="submit"].valid {
-    background-color: var(--sage-hover);
-}
-
-button[type="submit"].valid:active {
-    background-color: var(--sage-active);
-}
-
-/* Toggle text */
-.toggle-text {
-    color: var(--sage-darker);
-    font-weight: 600;
-    cursor: pointer;
-    margin-bottom: 12px;
-    font-size: 14px;
-    text-align: left;
-}
-
-.toggle-text:hover {
-    text-decoration: underline;
-}
-
-.optional-fields {
-    padding: 12px;
-    border-radius: 10px;
-    margin-bottom: 15px;
-    border: 2px solid var(--sage-darker);
-}
-
-#qr-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    margin-top: 30px;
-    padding: 20px;
-    background-color: #FFF9E3;
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-}
-
-#qr-section h2 {
-    color: var(--sage-darker);
-    margin-bottom: 12px;
-}
-
-#qr-section img {
-    max-width: 220px;
-    height: auto;
-    margin-bottom: 12px;
-}
-
-#qr-section a {
-    margin-top: 12px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    text-decoration: none; /* remove underline */
-}
-
-#qr-section a button {
-    padding: 12px 20px;
-    background-color: var(--sage-darker);
-    color: #FFFFFF;
-    font-size: 15px;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-weight: 600;
-}
-
-#qr-section a button:hover {
-    background-color: var(--sage-hover);
-    transform: translateY(-2px);
-}
-
-.optional {
-    font-size: 0.85em;
-    color: #888;
-}
-
-.error {
-    color: red;
-    font-weight: 600;
-    margin-bottom: 15px;
-    text-align: center;
-}
-
-@media (max-width: 550px) {
-    .container {
-        padding: 25px 20px;
-    }
-    #qr-section img {
-        max-width: 180px;
-    }
-}
-</style>
+        .error {
+            color: red;
+            text-align: center;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+    </style>
 </head>
 <body>
-
-<div class="container">
-    <h1>Quick Contact</h1>
-
-    {% if error_message %}
-        <div class="error">{{ error_message }}</div>
-    {% endif %}
-
-    <form method="POST" id="contactForm">
-        <label for="name">Full Name:</label>
-        <input type="text" name="name" id="name" required value="{{ values.get('name','') }}">
-
-        <label for="phone">Phone Number:</label>
-        <input type="text" name="phone" id="phone" required value="{{ values.get('phone','') }}">
-
-        <label for="email">Email: <span class="optional">(optional)</span></label>
-        <input type="email" name="email" id="email" value="{{ values.get('email','') }}">
-
-        <!-- Toggle optional fields -->
-        <div id="toggleOptional" class="toggle-text">Show More Optional Fields ▼</div>
-
-        <div class="optional-fields" id="optionalFields" style="display:none;">
-            <label for="org">Organization:</label>
-            <input type="text" name="org" id="org" value="{{ values.get('org','') }}">
-
-            <label for="title">Job Title:</label>
-            <input type="text" name="title" id="title" value="{{ values.get('title','') }}">
-
-            <label for="birthday">Birthday:</label>
-            <input type="text" id="birthday" name="birthday" placeholder="YYYY-MM-DD" value="{{ values.get('birthday','') }}">
-
-            <label for="address">Address:</label>
-            <textarea name="address" id="address" rows="2">{{ values.get('address','') }}</textarea>
-
-            <label for="note">Notes:</label>
-            <textarea name="note" id="note" rows="2">{{ values.get('note','') }}</textarea>
+    <div class="container">
+        <h1>Quick Contact QR</h1>
+        
+        <div id="error-message" class="error"></div>
+        
+        <form id="contactForm">
+            <div class="form-group">
+                <label>Full Name:</label>
+                <input type="text" id="name" required placeholder="Enter your full name">
+            </div>
+            
+            <div class="form-group">
+                <label>Phone Number:</label>
+                <input type="tel" id="phone" required placeholder="10-digit number starting with 6-9">
+            </div>
+            
+            <div class="form-group">
+                <label>Email (optional):</label>
+                <input type="email" id="email" placeholder="Enter your email">
+            </div>
+            
+            <button type="submit">Generate QR Code</button>
+        </form>
+        
+        <div id="qr-section">
+            <h3>Your QR Code</h3>
+            <div id="qrcode"></div>
+            <button onclick="downloadQR()">Download QR Code</button>
         </div>
-
-        <button type="submit">Generate QR</button>
-    </form>
-
-    {% if qr_img %}
-    <div id="qr-section">
-        <h2>Your QR Code</h2>
-        <img src="data:image/png;base64,{{ qr_img }}" alt="vCard QR Code">
-        <a href="data:image/png;base64,{{ qr_img }}" download="contact_qr.png">
-            <button type="button">Download QR</button>
-        </a>
     </div>
-    {% endif %}
-</div>
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script>
-flatpickr("#birthday", {
-    dateFormat: "Y-m-d",
-    allowInput: true
-});
+    <script>
+        document.getElementById('contactForm').onsubmit = function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.replace(/\s/g, '');
+            const email = document.getElementById('email').value.trim();
+            const errorDiv = document.getElementById('error-message');
 
-// Toggle optional fields
-const toggleBtn = document.getElementById('toggleOptional');
-const optionalFields = document.getElementById('optionalFields');
+            // Validation
+            if (!name) {
+                errorDiv.textContent = "Name is required.";
+                return;
+            }
 
-toggleBtn.addEventListener('click', () => {
-    if (optionalFields.style.display === 'none') {
-        optionalFields.style.display = 'block';
-        toggleBtn.textContent = "Hide Optional Fields ▲";
-    } else {
-        optionalFields.style.display = 'none';
-        toggleBtn.textContent = "Show More Optional Fields ▼";
-    }
-});
+            if (!/^[6-9]\d{9}$/.test(phone)) {
+                errorDiv.textContent = "Invalid phone number. Enter a valid 10-digit Indian number.";
+                return;
+            }
 
-// Dynamic Generate QR button color
-const form = document.getElementById("contactForm");
-const submitBtn = document.querySelector("button[type='submit']");
-const requiredFields = ["name", "phone"];
+            errorDiv.textContent = "";
 
-function checkFormValidity() {
-    let valid = true;
-    requiredFields.forEach(id => {
-        const input = document.getElementById(id);
-        if (!input.value.trim()) valid = false;
-    });
-    submitBtn.classList.toggle("valid", valid);
-}
+            // Generate vCard
+            const vcard = `BEGIN:VCARD
+VERSION:3.0
+FN:${name}
+TEL:${phone}
+${email ? 'EMAIL:' + email : ''}
+END:VCARD`;
 
-// Run on input change
-requiredFields.forEach(id => {
-    document.getElementById(id).addEventListener("input", checkFormValidity);
-});
+            // Generate QR Code
+            const qr = qrcode(0, 'L');
+            qr.addData(vcard);
+            qr.make();
+            
+            document.getElementById('qrcode').innerHTML = qr.createImgTag(5);
+            document.getElementById('qr-section').style.display = 'block';
+        };
 
-// Initial check
-checkFormValidity();
-</script>
-
+        function downloadQR() {
+            const qrImg = document.querySelector('#qrcode img');
+            if (qrImg) {
+                const link = document.createElement('a');
+                link.download = 'contact-qr.png';
+                link.href = qrImg.src;
+                link.click();
+            }
+        }
+    </script>
 </body>
 </html>
