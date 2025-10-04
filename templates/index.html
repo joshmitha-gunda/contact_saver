@@ -10,10 +10,10 @@
 
 <style>
 :root {
-    --sage-bg: #9CAF88;        /* page background */
-    --sage-darker: #7D9B6F;    /* buttons and QR heading */
-    --sage-hover: #8FAE79;     /* hover/brighter shade */
-    --sage-active: #9ACF90;    /* click/brightest */
+    --sage-bg: #9CAF88;
+    --sage-darker: #7D9B6F;
+    --sage-hover: #8FAE79;
+    --sage-active: #9ACF90;
 }
 
 body {
@@ -21,9 +21,9 @@ body {
     background-color: var(--sage-bg);
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     min-height: 100vh;
-    margin: 0;
+    margin: 20px 0;
     font-weight: 500;
 }
 
@@ -32,8 +32,8 @@ body {
     padding: 35px 30px;
     border-radius: 20px;
     box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-    max-width: 500px;
     width: 100%;
+    max-width: 500px;
     transition: transform 0.3s ease;
 }
 
@@ -46,6 +46,7 @@ h1 {
     margin-bottom: 25px;
     color: var(--sage-darker);
     font-weight: 700;
+    font-size: 1.8em;
 }
 
 label {
@@ -75,7 +76,7 @@ input:focus, textarea:focus {
 button[type="submit"] {
     width: 100%;
     padding: 14px;
-    background-color: var(--sage-darker);
+    background-color: #7B9A6D; /* slightly darker than bg */
     color: #FFFFFF;
     font-size: 16px;
     border: none;
@@ -129,6 +130,7 @@ button[type="submit"].valid:active {
     background-color: #FFF9E3;
     border-radius: 15px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    width: 100%;
 }
 
 #qr-section h2 {
@@ -137,7 +139,7 @@ button[type="submit"].valid:active {
 }
 
 #qr-section img {
-    max-width: 220px;
+    max-width: 90%; /* responsive */
     height: auto;
     margin-bottom: 12px;
 }
@@ -147,12 +149,12 @@ button[type="submit"].valid:active {
     width: 100%;
     display: flex;
     justify-content: center;
-    text-decoration: none; /* remove underline */
+    text-decoration: none;
 }
 
 #qr-section a button {
     padding: 12px 20px;
-    background-color: var(--sage-darker);
+    background-color: #7B9A6D;
     color: #FFFFFF;
     font-size: 15px;
     border: none;
@@ -179,12 +181,20 @@ button[type="submit"].valid:active {
     text-align: center;
 }
 
+/* Responsive adjustments */
 @media (max-width: 550px) {
     .container {
-        padding: 25px 20px;
+        padding: 20px 15px;
+        margin: 10px;
+    }
+    h1 {
+        font-size: 1.5em;
+    }
+    input, textarea, button {
+        font-size: 14px;
     }
     #qr-section img {
-        max-width: 180px;
+        max-width: 100%;
     }
 }
 </style>
@@ -208,7 +218,6 @@ button[type="submit"].valid:active {
         <label for="email">Email: <span class="optional">(optional)</span></label>
         <input type="email" name="email" id="email" value="{{ values.get('email','') }}">
 
-        <!-- Toggle optional fields -->
         <div id="toggleOptional" class="toggle-text">Show More Optional Fields ▼</div>
 
         <div class="optional-fields" id="optionalFields" style="display:none;">
@@ -242,7 +251,6 @@ button[type="submit"].valid:active {
     {% endif %}
 </div>
 
-<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
 flatpickr("#birthday", {
@@ -250,7 +258,6 @@ flatpickr("#birthday", {
     allowInput: true
 });
 
-// Toggle optional fields
 const toggleBtn = document.getElementById('toggleOptional');
 const optionalFields = document.getElementById('optionalFields');
 
@@ -264,7 +271,6 @@ toggleBtn.addEventListener('click', () => {
     }
 });
 
-// Dynamic Generate QR button color
 const form = document.getElementById("contactForm");
 const submitBtn = document.querySelector("button[type='submit']");
 const requiredFields = ["name", "phone"];
@@ -278,12 +284,10 @@ function checkFormValidity() {
     submitBtn.classList.toggle("valid", valid);
 }
 
-// Run on input change
 requiredFields.forEach(id => {
     document.getElementById(id).addEventListener("input", checkFormValidity);
 });
 
-// Initial check
 checkFormValidity();
 </script>
 
