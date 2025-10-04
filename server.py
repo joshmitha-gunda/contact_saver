@@ -67,7 +67,7 @@ def index():
             qr = qrcode.QRCode(
                 version=None,
                 error_correction=ERROR_CORRECT_L,
-                box_size=8,
+                box_size=6,
                 border=4
             )
             qr.add_data(vcard_data)
@@ -81,4 +81,6 @@ def index():
     return render_template("index.html", qr_img=qr_img, values=values, error_message=error_message)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
