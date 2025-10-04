@@ -1,3 +1,2 @@
 Flask
-qrcode
-pillow
+qrcode[pil]
