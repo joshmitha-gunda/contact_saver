@@ -4,6 +4,7 @@ import io
 import base64
 from qrcode.constants import ERROR_CORRECT_L
 import re
+import os
 
 app = Flask(__name__)
 app.secret_key = "supersecret"
@@ -34,6 +35,10 @@ FN:{name}"""
     vcard += "\nEND:VCARD"
     return vcard
 
+@app.route("/healthz")
+def healthz():
+    return "OK", 200
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     qr_img = None
@@ -41,7 +46,6 @@ def index():
     error_message = None
 
     if request.method == "POST":
-        # Get form values
         name = request.form.get("name", "").strip()
         phone = request.form.get("phone", "").replace(" ", "")
         email = request.form.get("email", "").strip()
@@ -58,7 +62,7 @@ def index():
         # Validation
         if not name:
             error_message = "Name is required."
-        elif not re.fullmatch(r'^[6-9]\d{9}$', phone):
+        elif phone and not re.fullmatch(r'^[6-9]\d{9}$', phone):
             error_message = "Invalid phone number. Enter a valid 10-digit Indian number starting with 6-9."
         else:
             other_info = {"birthday": birthday, "address": address, "note": note}
@@ -67,7 +71,7 @@ def index():
             qr = qrcode.QRCode(
                 version=None,
                 error_correction=ERROR_CORRECT_L,
-                box_size=6,
+                box_size=8,
                 border=4
             )
             qr.add_data(vcard_data)
@@ -81,6 +85,5 @@ def index():
     return render_template("index.html", qr_img=qr_img, values=values, error_message=error_message)
 
 if __name__ == "__main__":
-    import os
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
